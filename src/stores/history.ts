@@ -7,13 +7,24 @@ export const useHistoryStore = defineStore('history', () => {
   const results = ref<TestResult[]>(loadResults())
 
   const leaderboard = computed(() => {
-    return [...results.value].sort((a, b) => b.wpm - a.wpm).slice(0, 10)
+    return [...results.value].sort((a, b) => {
+      if (b.wpm !== a.wpm) {
+        return b.wpm - a.wpm
+      }
+      return b.accuracy - a.accuracy
+    }).slice(0, 10)
   })
 
   const recentResults = computed(() => {
     return [...results.value].sort((a, b) => 
       new Date(b.date).getTime() - new Date(a.date).getTime()
-    ).slice(0, 20)
+    ).slice(0, 10)
+  })
+
+  const recentResultsForChart = computed(() => {
+    return [...results.value].sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    ).slice(-7)
   })
 
   const averageWpm = computed(() => {
@@ -63,6 +74,7 @@ export const useHistoryStore = defineStore('history', () => {
     results,
     leaderboard,
     recentResults,
+    recentResultsForChart,
     averageWpm,
     bestWpm,
     totalTests,

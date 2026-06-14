@@ -1,6 +1,7 @@
-import type { TestResult } from '@/types'
+import type { TestResult, WrongWord } from '@/types'
 
 const STORAGE_KEY = 'typing_test_results'
+const WRONG_WORDS_KEY = 'typing_wrong_words'
 
 export function saveResults(results: TestResult[]): void {
   try {
@@ -48,4 +49,32 @@ export function formatTime(seconds: number): string {
   const secs = Math.floor(seconds % 60)
   const tenths = Math.floor((seconds % 1) * 10)
   return `${mins}:${String(secs).padStart(2, '0')}.${tenths}`
+}
+
+export function saveWrongWords(words: WrongWord[]): void {
+  try {
+    localStorage.setItem(WRONG_WORDS_KEY, JSON.stringify(words))
+  } catch (error) {
+    console.error('Failed to save wrong words to localStorage:', error)
+  }
+}
+
+export function loadWrongWords(): WrongWord[] {
+  try {
+    const data = localStorage.getItem(WRONG_WORDS_KEY)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (error) {
+    console.error('Failed to load wrong words from localStorage:', error)
+  }
+  return []
+}
+
+export function clearWrongWords(): void {
+  try {
+    localStorage.removeItem(WRONG_WORDS_KEY)
+  } catch (error) {
+    console.error('Failed to clear wrong words from localStorage:', error)
+  }
 }

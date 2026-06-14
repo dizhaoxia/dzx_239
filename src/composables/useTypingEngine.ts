@@ -67,6 +67,44 @@ export function useTypingEngine(targetText: () => string, userInput: () => strin
     return userInput().length >= targetText().length
   })
 
+  const wrongWords = computed(() => {
+    const target = targetText()
+    const input = userInput()
+    if (input.length === 0) return []
+
+    const words: string[] = []
+    let currentWordStart = 0
+    let hasErrorInWord = false
+    let currentWord = ''
+
+    for (let i = 0; i < input.length; i++) {
+      const targetChar = target[i]
+      const inputChar = input[i]
+
+      if (targetChar === ' ' || targetChar === undefined) {
+        if (hasErrorInWord && currentWord.trim()) {
+          words.push(currentWord.trim())
+        }
+        currentWordStart = i + 1
+        hasErrorInWord = false
+        currentWord = ''
+      } else {
+        if (inputChar !== targetChar) {
+          hasErrorInWord = true
+        }
+        currentWord += targetChar
+      }
+    }
+
+    if (input.length >= target.length) {
+      if (hasErrorInWord && currentWord.trim()) {
+        words.push(currentWord.trim())
+      }
+    }
+
+    return words
+  })
+
   return {
     charStates,
     correctChars,
@@ -74,6 +112,7 @@ export function useTypingEngine(targetText: () => string, userInput: () => strin
     totalTyped,
     accuracy,
     progress,
-    isCompleted
+    isCompleted,
+    wrongWords
   }
 }

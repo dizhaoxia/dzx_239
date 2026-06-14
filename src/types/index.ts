@@ -29,3 +29,9 @@ export interface TypingStats {
   totalTyped: number
   progress: number
 }
+
+export interface WrongWord {
+  word: string
+  count: number
+  lastWrongDate: string
+}

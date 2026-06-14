@@ -29,9 +29,7 @@ ChartJS.register(
 const historyStore = useHistoryStore()
 
 const chartData = computed(() => {
-  const recentResults = [...historyStore.results]
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(-10)
+  const recentResults = historyStore.recentResultsForChart
 
   const labels = recentResults.map((_, index) => `#${index + 1}`)
   const wpmData = recentResults.map(r => r.wpm)

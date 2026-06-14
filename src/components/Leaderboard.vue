@@ -61,8 +61,8 @@ function formatTime(seconds: number): string {
               <Target :size="12" />
               {{ result.accuracy }}%
             </span>
-            <span class="meta-item">
-              {{ formatTime(result.timeUsed) }}
+            <span class="meta-item date-item">
+              {{ result.date }}
             </span>
           </div>
         </div>
@@ -150,6 +150,10 @@ function formatTime(seconds: number): string {
 
 .meta-item {
   @apply flex items-center gap-1 text-xs text-slate-400;
+}
+
+.date-item {
+  @apply text-slate-500;
 }
 
 .ranking-wpm {

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { Keyboard, Zap, Trophy, Target, BarChart3, Menu, X } from 'lucide-vue-next'
 import { useTypingStore } from '@/stores/typing'
 import { useHistoryStore } from '@/stores/history'
+import { useWrongWordsStore } from '@/stores/wrongWords'
 import { useTimer } from '@/composables/useTimer'
 import { useWpmCalculator } from '@/composables/useWpmCalculator'
 import { useTypingEngine } from '@/composables/useTypingEngine'
@@ -13,14 +14,16 @@ import ResultModal from '@/components/ResultModal.vue'
 import HistoryList from '@/components/HistoryList.vue'
 import Leaderboard from '@/components/Leaderboard.vue'
 import TrendChart from '@/components/TrendChart.vue'
+import WrongWordsPanel from '@/components/WrongWordsPanel.vue'
 
 const typingStore = useTypingStore()
 const historyStore = useHistoryStore()
+const wrongWordsStore = useWrongWordsStore()
 const typingAreaRef = ref<InstanceType<typeof TypingArea> | null>(null)
 
 const { elapsedTime, formattedTime, start, pause, resume, stop, reset } = useTimer()
 
-const { correctChars, accuracy, progress, isCompleted } = useTypingEngine(
+const { correctChars, accuracy, progress, isCompleted, wrongWords } = useTypingEngine(
   () => typingStore.targetText,
   () => typingStore.userInput
 )
@@ -59,6 +62,10 @@ function handleComplete() {
       passageId: typingStore.currentPassage.id,
       passageTitle: typingStore.currentPassage.title
     })
+  }
+
+  if (wrongWords.value.length > 0) {
+    wrongWordsStore.addWrongWords(wrongWords.value)
   }
 
   showResult.value = true
@@ -195,6 +202,7 @@ onMounted(() => {
           />
 
           <div class="md:hidden mt-8 space-y-6">
+            <WrongWordsPanel />
             <Leaderboard />
             <TrendChart />
             <HistoryList />
@@ -236,6 +244,7 @@ onMounted(() => {
           </div>
         </div>
 
+        <WrongWordsPanel />
         <Leaderboard />
         <TrendChart />
         <HistoryList />
